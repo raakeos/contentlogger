@@ -16,6 +16,22 @@ sudo systemctl unmask hostapd.service
 sudo systemctl enable hostapd.service
 
 #Configure dhcp-server(uap0-interface) ip-address
+sudo echo "hostname" > /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "clientid" >> /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "persistent" >> /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "option rapid_commit" >> /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "option domain_name_servers, domain_name, domain_search, host_name" >> /etc/dhcpcd.conf
+sudo echo "option classless_static_routes" >> /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "option interface_mtu" >> /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "require dhcp_server_identifier" >> /etc/dhcpcd.conf
+sudo echo "" >> /etc/dhcpcd.conf
+sudo echo "slaac private" >> /etc/dhcpcd.conf
 sudo echo "" >> /etc/dhcpcd.conf
 sudo echo "#RaakeOS--IPSettings--Start" >> /etc/dhcpcd.conf
 sudo echo "interface uap0" >> /etc/dhcpcd.conf
