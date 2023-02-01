@@ -32,14 +32,12 @@ sudo echo "net.ipv4.ip_forward=1" > "/etc/sysctl.d/routed-ap.conf"
 sudo rfkill unblock wlan
 
 #Configure dns-server 
-sudo rm /etc/dnsmasq.conf
 sudo echo "interface=uap0" > "/etc/dnsmasq.conf"
 sudo echo "dhcp-range=192.168.58.5,192.168.58.100,255.255.255.0,300d" >> "/etc/dnsmasq.conf"
 sudo echo "domain=wlan" >> "/etc/dnsmasq.conf"
 sudo echo "address=/rt.wlan/192.168.58.1" >> "/etc/dnsmasq.conf"
 
 #Configure hostapd (Access point)
-#sudo rm /etc/hostapd/hostapd.conf
 sudo echo "country_code=FI" > "/etc/hostapd/hostapd.conf"
 sudo echo "interface=uap0" >> "/etc/hostapd/hostapd.conf"
 sudo echo "ssid=RaakeContentLoggerRPI01" >> "/etc/hostapd/hostapd.conf"
@@ -55,7 +53,6 @@ sudo echo "wpa_pairwise=TKIP" >> "/etc/hostapd/hostapd.conf"
 sudo echo "rsn_pairwise=CCMP" >> "/etc/hostapd/hostapd.conf"
 
 #Create startup script
-sudo rm /home/raake/raakeosapstart.sh
 sudo echo "systemctl stop hostapd.service" > "/home/raake/raakeosapstart.sh"
 sudo echo "systemctl stop dnsmasq.service" >> "/home/raake/raakeosapstart.sh"
 sudo echo "systemctl stop dhcpcd.service" >> "/home/raake/raakeosapstart.sh"
@@ -72,7 +69,6 @@ sudo echo "sleep 5" >> "/home/raake/raakeosapstart.sh"
 sudo echo "systemctl start dnsmasq.service" >> "/home/raake/raakeosapstart.sh"
 
 #Configure system so that startup-script is executed in starting process
-sudo rm /etc/rc.local
 sudo echo "#!/bin/sh -e" > "/etc/rc.local"
 sudo echo "#" >> "/etc/rc.local"
 sudo echo "# rc.local" >> "/etc/rc.local"
@@ -103,7 +99,7 @@ sudo chmod +x /home/raake/raakeosapstart.sh
 sudo apt install -y git
 
 #Get Content Logger source
-git clone https://github.com/raakeos/raakeos.git
+git clone https://github.com/raakeos/contentlogger.git
 
 # install Qt5 compinents OS
 sudo apt-get install -y qtbase5-dev
