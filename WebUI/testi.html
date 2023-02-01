@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fi">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Raake Content Logging Solution</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="js/jquery-3.6.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <link href="css/imotbrowser.css" rel="stylesheet">
+        <link href="css/styles.css" rel="stylesheet">
+    </head>
+    <body>
+		<div class="container">
+			<div id="navbarElement"></div>
+			<div id="contentElement"></div>
+		</div>
+
+				
+		<script>
+			$(document).ready(function(){
+				openNavbar(); 
+				openContent('imotbrowser.html');
+			});	
+			
+			function openNavbar(){
+				fetch('navbar.html')
+				  .then(response=> response.text())
+				  .then(text=> document.getElementById('navbarElement').innerHTML = text);  
+			};
+
+			function openContent(contenturl){
+                $('#contentElement').load(contenturl);
+				//fetch(contenturl)
+				//  .then(response=> response.text())
+				//  .then(text=> document.getElementById('contentElement').innerHTML = text);  
+			};
+			
+		</script>
+		
+    </body>
+</html> 

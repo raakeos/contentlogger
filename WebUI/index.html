@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fi">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Raake Content Logging Solution</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="js/jquery-3.6.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <link href="css/imotbrowser.css" rel="stylesheet">
+        <link href="css/styles.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div id="navbarElement"></div>
+            <div id="contentElement"></div>
+        </div>
+        <p hidden id="deviceUUID"></p>
+        <p hidden id="configXML"></p>
+
+        <script type="module">
+            import {DeviceAPI} from "./js/device.js";
+    
+            const deviceAPI = new DeviceAPI(window.location.hostname, 40001);
+            window.deviceAPI = deviceAPI;
+            //deviceAPI.getDevice();
+            getDevice();
+        </script>
+
+                
+        <script>
+            $(document).ready(function(){
+                openNavbar(); 
+                //openContent('device.html');
+            });	
+            
+            function openNavbar(){
+                fetch('navbar.html')
+                  .then(response=> response.text())
+                  .then(text=> document.getElementById('navbarElement').innerHTML = text);  
+            };
+
+            function openContent(contenturl){
+                $('#contentElement').load(contenturl);
+            };
+
+            function getDevice(){                
+                let url = window.location.origin + ":40001/device";
+                fetch(url, { method: 'GET', headers: {'Content-type': 'text/xml'}})
+                .then(response => response.text())
+                .then(responseText => {
+                    let deviceUUID = this.parseXMLTagContent(responseText, "<uuid>", "</uuid>");
+                    if(deviceUUID !== undefined){
+                        let deviceUUIDElement = document.getElementById("deviceUUID");
+                        if(deviceUUIDElement !== undefined){
+                            deviceUUIDElement.innerHTML = deviceUUID;
+                            getConfig();
+                        }            
+                    }
+                    else{
+                        window.openContent('nouuid.html');
+                    }
+                });                
+            }
+
+            function getConfig(){
+                let url = window.location.origin + ":40001/config";
+                fetch(url, { method: 'GET', headers: {'Content-type': 'text/xml'}})
+                .then(response => response.text())
+                .then(responseText => {
+                    if(responseText.length === 0){
+                        window.openContent('noconfigxml.html');
+                    }
+                    else {
+                        let configXML = document.getElementById('configXML');
+                        configXML.innerHTML = responseText;
+                        window.openContent('imotbrowser.html');
+                    }
+                }); 
+            }
+
+            function parseXMLTagContent(xmlContent, startTag, endTag){
+                let tagContent = undefined;
+                let start = xmlContent.indexOf(startTag);
+                if(start >= 0)
+                {
+                    start = start + startTag.length;
+                    let end = xmlContent.indexOf(endTag,start);
+                    if(end > start)
+                    {
+                        tagContent = xmlContent.substr(start, end-start);
+                    }
+                }
+                return tagContent;
+            }
+
+            // let deviceUUID = document.getElementById('deviceUUID');
+                // let url = "/device?uuid=" + deviceUUID.value;
+                // fetch(url, { method: 'PUT', headers: {'Content-type': 'text/xml'},body: ''})
+                // .then( x => {
+                //     window.location = window.location;
+                // });   
+            
+        </script>
+        
+    </body>
+</html> 

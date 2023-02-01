@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>No Config XML</title>
+</head>
+
+    <body>
+        <table style="width: 100%;">
+            <tr>
+                <td>
+                    <label for="configXMLTextarea">Config XML:</label>
+                </td>
+                <td style="text-align: right;">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <textarea id="configXMLTextarea" name="configXMLTextarea" style="width:100%; overflow-x: scroll;"></textarea>
+                </td>
+            </tr>
+        </table>
+        <button type="button" onclick="setConfigXML()">Set</button> 
+        
+
+
+        <script>
+            $(document).ready(function(){
+                resizeTextArea(); 
+                getExampleConfig();
+            });	
+
+            function getExampleConfig(){
+                let url = window.location.origin + ":40001/device?exampleconfig=true";
+                fetch(url, { method: 'GET', headers: {'Content-type': 'text/xml'}})
+                .then(response => response.text())
+                .then(responseText => {
+                    if(responseText.length !== 0){
+                        let configXMLTextarea = document.getElementById('configXMLTextarea');
+                        configXMLTextarea.innerHTML = responseText;
+                    }
+                }); 
+            }
+
+            function resizeTextArea(){
+                let configXML = document.getElementById('configXMLTextarea');
+                configXML.style.height = window.innerHeight - 50 + "px";
+            }
+
+            function createDefaultXML(){
+                let configXML = document.getElementById('configXMLTextarea');
+                let defaultXML = document.getElementById('defaultXML');
+                configXML.value = defaultXML.innerHTML;
+
+            }
+
+            function setConfigXML(){
+                let configXML = document.getElementById('configXMLTextarea');
+                let url = window.location.origin + ":40001/config";
+                fetch(url, { method: 'PUT', headers: {'Content-type': 'text/xml'},body: configXML.value})
+                .then( response => {
+                    window.location = window.location;
+                });                
+            }
+        </script>
+    </body>
+</html>

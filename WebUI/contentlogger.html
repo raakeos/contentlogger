@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Content Logger WebUI</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="js/xlsx.js"></script> 
+
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="accordion" id="accordionControlPanel">
+                            
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingIMotAPI">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContentRestAPI" aria-expanded="false" aria-controls="collapseContentIMoTAPI">
+                                REST API
+                            </button>
+                        </h2>
+
+                        <div id="collapseContentRestAPI" class="accordion-collapse collapse" aria-labelledby="headingIMotAPI" data-bs-parent="#accordionControlPanel">
+                            <div class="accordion-body">
+                                <label for="ipAddress">IP-Address:</label><br>
+                                <input type="text" class="form-control" id="ipAddress" name="ipAddress" value="192.168.7.51">
+                                <label for="port">Port:</label><br>
+                                <input type="number" class="form-control" id="port" name="port" value="40001" min="1" max="65535">  
+                                <br>
+                                <button id="getIMoTButton" type="button" class="btn btn-success">IMoT</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingLoggerControl">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLoggerControl" aria-expanded="false" aria-controls="collapseLoggerControl">
+                                Logger Control
+                            </button>
+                        </h2>
+
+                        <div id="collapseLoggerControl" class="accordion-collapse collapse" aria-labelledby="headingLoggerControl" data-bs-parent="#accordionControlPanel">
+                            <div class="accordion-body">
+                                <select name="loggerBlocks" id="loggerBlocks" class="form-select"></select>
+                                <select name="connectionNodes" id="connectionNodes" class="form-select"></select>
+                                
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSearchControl">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSearchControl" aria-expanded="false" aria-controls="collapseSearchControl">
+                                Search
+                            </button>
+                        </h2>
+
+                        <div id="collapseSearchControl" class="accordion-collapse collapse" aria-labelledby="headingSearchControl" data-bs-parent="#accordionControlPanel">
+                            <div class="accordion-body">                               
+                                <label for="startdate">Startdate:</label><br>
+                                <input type="date" class="form-control" id="startdate" name="startdate" value="2022-10-04">
+
+                                <label for="starttime">Starttime:</label><br>
+                                <input type="time" class="form-control" id="starttime" name="starttime" value="14:45:00">
+
+                                <label for="enddate">Enddate:</label><br>
+                                <input type="date" class="form-control" id="enddate" name="enddate" value="2022-10-04">
+
+                                <label for="endtime">Endtime:</label><br>
+                                <input type="time" class="form-control" id="endtime" name="endtime" value="14:50:00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingContentTags">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContentTags" aria-expanded="true" aria-controls="collapseContentTags">
+                                Content Tags
+                            </button>
+                        </h2>
+
+                        <div id="collapseContentTags" class="accordion-collapse collapse show" aria-labelledby="headingContentTags" data-bs-parent="#accordionControlPanel">
+                            <div class="accordion-body">
+                                <select name="connectionNodes" id="connectionNodes" class="form-select"></select>
+                                <div id="contentTagListElement" class="divContentTags overflow-scroll"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <ul id="contentTabs" class="nav nav-pills flex-column flex-sm-row">
+                    <li class="nav-item">
+                        <a id="chartTabButton" class="flex-sm-fill text-sm-center nav-link active" data-bs-toggle="tab" href="#chartTab">Chart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="flex-sm-fill text-sm-center nav-link" data-bs-toggle="tab" href="#chart3DTab">3D Chart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="flex-sm-fill text-sm-center nav-link" data-bs-toggle="tab" href="#tableTab">Table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="flex-sm-fill text-sm-center nav-link" data-bs-toggle="tab" href="#onlineTab">Online</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane container active" id="chartTab">
+                        <canvas id="contentCanvas" width="100%" height="50vh" class="contentChart"></canvas>  
+                        
+                        <div id="carouselImages" class="carousel slide" data-bs-ride="carousel" style="display: none;">
+                            <div class="carousel-inner" id="carousel">
+                            </div>
+                            <button id="carouselPrevButton" class="carousel-control-prev" type="button">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button id="carouselNextButton" class="carousel-control-next" type="button">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                        <div id="imageThumbnails" class="thumbnails" style="overflow:scroll; height:100%; display:none;">testi</div>
+
+                        
+                        
+
+                        <button id="contentChartRefreshButton" type="button" class="btn btn-success">
+                            <span id="contentChartRefreshButtonSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Refresh
+                        </button>                    
+                    </div>
+                    <div class="tab-pane container" id="chart3DTab">
+                        <canvas id="content3DCanvas" width="100%" height="50vh" class="contentChart"></canvas>
+                        <button id="contentChart3DRefreshButton" type="button" class="btn btn-success">
+                            <span id="contentChart3DRefreshButtonSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Refresh
+                        </button>                      
+                    </div>
+                    <div class="tab-pane container fade" id="tableTab">
+                        <div class="divContent overflow-scroll">
+                            <table id="contentValues" class="table table-bordered table-hover table-responsive-sm"></table>
+                        </div>
+                        <br>
+                        <button id="contentTableRefreshButton" type="button" class="btn btn-success">
+                            <span id="contentTableRefreshButtonSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Refresh
+                        </button>
+                        <button id="contentTableExcelButton"type="button" class="btn btn-success">Excel</button>
+                    </div>
+                    <div class="tab-pane container fade" id="onlineTab">
+                        <canvas id="onlineCanvas" width="100%" height="50vh" class="contentChart"></canvas>
+                        <img id="ItemPreview" src="">                        
+                    </div>
+                </div>   
+                <br><br>
+
+                
+            </div> 
+        </div>        
+    </div>
+
+    <div id="chartData" class="detailedData">testi</div>
+    
+	
+
+    
+    <script type="module">
+		
+		import {RestAPI} from "./js/restapi.js";
+		
+		const restAPI = new RestAPI();
+        restAPI.getIMoT();
+
+        document.getElementById("contentCanvas").addEventListener('click', function(){restAPI.detailedChartData(event);});
+        
+		document.getElementById("contentChartRefreshButton").addEventListener('click', refreshValues);
+		document.getElementById("contentChart3DRefreshButton").addEventListener('click', refreshValues);
+		document.getElementById("contentTableRefreshButton").addEventListener('click', refreshValues);
+		document.getElementById("contentTableExcelButton").addEventListener('click', function(){restAPI.excel();});
+		document.getElementById("getIMoTButton").addEventListener('click', function(){restAPI.getIMoT();});
+		// document.getElementById("loggerBlocks").addEventListener('change', function(){restAPI.loggerBlockChanged();});
+		document.getElementById("connectionNodes").addEventListener('change', function(){restAPI.connectionNodeChanged();});
+
+        document.getElementById("carouselPrevButton").addEventListener('click', function(){restAPI.prevCarouselImage();});
+        document.getElementById("carouselNextButton").addEventListener('click', function(){restAPI.nextCarouselImage();});
+		
+        document.getElementById("contentChartRefreshButtonSpinner").style.visibility = "hidden";
+        document.getElementById("contentChart3DRefreshButtonSpinner").style.visibility = "hidden";
+        document.getElementById("contentTableRefreshButtonSpinner").style.visibility = "hidden";	
+		
+		
+		
+		function refreshValues(event){
+            let spinnerElement = document.getElementById(event.target.id + "Spinner");
+            spinnerElement.style.visibility = "visible";            
+			restAPI.refreshValues();
+		}
+        
+        let timeZoneOffset = new Date().getTimezoneOffset() * 60000;
+        let currentTimestamp = Date.now() - timeZoneOffset;;
+        let startTimeStamp = currentTimestamp - 300000;
+        let startDate = new Date(startTimeStamp);
+        startDate.setMilliseconds(0);
+        let endDate = new Date(currentTimestamp);
+        endDate.setMilliseconds(0);
+
+        
+        let startdateElement = document.getElementById("startdate");
+        startdateElement.valueAsNumber = (startDate / 86400000) * 86400000;
+
+        let starttimeElement = document.getElementById("starttime");
+        starttimeElement.valueAsNumber = startDate;
+
+        let enddateElement = document.getElementById("enddate");
+        enddateElement.valueAsNumber = (endDate / 86400000) * 86400000;
+
+        let endtimeElement = document.getElementById("endtime");
+        endtimeElement.valueAsNumber = endDate;
+
+        let ipAddress = window.location.hostname;
+        let ipAddressElement = document.getElementById("ipAddress");
+        ipAddressElement.value = ipAddress;
+
+        
+    </script>
+
+</body>
+</html>
