@@ -127,7 +127,7 @@ sudo apt-get install -y nodejs
 sudo apt-get install -y npm
 
 #install express, cors and mariadb for nodejs
-cd /home/raake/raakeos/RaakeRestAPI
+cd /home/raake/contentlogger/RaakeRestAPI
 sudo npm install express
 sudo npm install cors
 sudo npm install mariadb
@@ -137,7 +137,7 @@ cd ../..
 sudo apt install -y nginx
 
 #Change homepage folder
-sudo sed -i 's_root /var/www/html;_root /home/raake/raakeos/WebUI;_g' /etc/nginx/sites-available/default
+sudo sed -i 's_root /var/www/html;_root /home/raake/contentlogger/WebUI;_g' /etc/nginx/sites-available/default
 
 #if using usb-drive
 if [ ! -d "/mnt/contentlogger" ]
