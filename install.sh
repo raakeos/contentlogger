@@ -177,5 +177,20 @@ sudo sed -i 's_bind-address            = 127.0.0.1_bind-address            = 0.0
 
 sudo systemctl restart mariadb.service
 
+#Create content logger api service
+sudo echo "[Unit]" > "/etc/systemd/system/raakerestapi.service"
+sudo echo "Description=Raake Content Logger API Service" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "After=network-online.target" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "[Service]" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "ExecStart=node /home/raake/contentlogger/RaakeRestAPI/restapi.js" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "KillMode=process" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "Restart=always" >> "/etc/systemd/system/raakerestapi.service"
+
+sudo echo "[Install]" >> "/etc/systemd/system/raakerestapi.service"
+sudo echo "WantedBy=multi-user.target" >> "/etc/systemd/system/raakerestapi.service"
+
+sudo systemctl enable raakerestapi.service
+sudo systemctl start raakerestapi.service
 
 sudo reboot
