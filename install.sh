@@ -158,8 +158,24 @@ sudo apt install mariadb-server -y
 #Install QMYSQL driver 
 sudo apt-get install -y libqt5sql5-mysql
 
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo netfilter-persistent save
-sudo netfilter-persistent reload
+#Create a Database
+sudo mariadb -e "create database if not exists contentlogger"
+sudo mariadb -e "create user if not exists 'raake'@localhost IDENTIFIED BY 'RaakeSmart'"
+sudo mariadb -e "CREATE TABLE IF NOT EXISTS contentlogger.ContentLoggerValue (HierarchyUUID binary(16) NOT NULL,Timestamp bigint(20) NOT NULL,ValueData longblob NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+sudo mariadb -e "GRANT ALL PRIVILEGES ON contentlogger.* TO 'raake'@'192.168.%.%' IDENTIFIED BY 'RaakeSmart' WITH GRANT OPTION"
+sudo mariadb -e "OPTIMIZE TABLE contentlogger.ContentLoggerValue"
+
+#Configure MariaDB Server
+sudo mariadb -e "SET PASSWORD FOR 'root'@localhost = PASSWORD('RaakeSmart');"
+sudo mariadb -e "DROP DATABASE IF EXISTS test"
+
+
+sudo mariadb -e "FLUSH PRIVILEGES"
+
+#Change bind-addres from local to all interfaces 
+sudo sed -i 's_bind-address            = 127.0.0.1_bind-address            = 0.0.0.0_g' /etc/mysql/mariadb.conf.d/50-server.cnf
+
+sudo systemctl restart mariadb.service
+
 
 sudo reboot
